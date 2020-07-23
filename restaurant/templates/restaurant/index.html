@@ -1,54 +1,55 @@
 {% block styles %}
 {% load static %}
 <title>Restaurants San Rafael</title>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<link rel="stylesheet" href="{% static 'restaurant/login.css' %}" type="text/css">
-<script src="{% static 'restaurant/login.js' %}" type="text/javascript"></script>
-<link rel="shortcut icon" type="image/png" href="{% static 'restaurant/core/icon.png' %}"/>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<script src="https://code.jquery.com/jquery-2.1.0.min.js" ></script>
+
+<link rel="stylesheet" href="{% static 'restaurant/style.css' %}" type="text/css">
+<script src="{% static 'restaurant/style.js' %}" type="text/javascript"></script>
+
 {% endblock %}
 
 {% block content %}
+<div id="formWrapper">
 
-        <div class="login-reg-panel">
-            <div class="login-info-box">
-                <h2>Have an account?</h2>
-                <p>Holi</p>
-                <label id="label-register" for="log-reg-show">Login</label>
-                <input type="radio" name="active-log-panel" id="log-reg-show"  checked="checked">
-            </div>
+<div id="form">
 
-            <div class="register-info-box">
-                <a id="label-login" class="text-secondary" href="/admin">Administrator</a>
-                <p></p>
-                <h2>¿No tenés una cuenta?</h2>
-                <!--<p>Ingresá tus datos</p>-->
-                <p>Envia un mail a stefania.g.a@outlook.com</p>
-                <!--<label id="label-login" for="log-login-show">Registrar</label>-->
-                <input type="radio" name="active-log-panel" id="log-login-show">
-            </div>
+	<div align="center">
+		<img src="{% static 'restaurant/images/logo.png' %}" height="200px" width="200px"  align="center" style="margin:50px"/>
+	</div>
 
-            <div class="white-panel">
-                <div class="login-show">
-                    <form action="{% url 'restaurant:login' %}" method="post">
-                    {% csrf_token %}
-                        <h2>LOGIN</h2>
-                        <input name = "username" type="text" placeholder="Usuario">
-                        <input name = "password" type="password" placeholder="Contraseña">
-                        <input type="submit" value="Login">
-                        <a href="">Forgot password?</a>
-                    </form>
-                </div>
-                <div class="register-show">
-                    <h2>REGISTER</h2>
-                    <input type="text" placeholder="Email">
-                    <input type="password" placeholder="Password">
-                    <input type="password" placeholder="Confirm Password">
-                    <input type="button" value="Register">
-                </div>
-            </div>
-        </div>
+	<form action="{% url 'restaurant:login' %}" method="post">
+		{% csrf_token %}
+		<h2>LOG IN</h2>
+		<div class="form-item">
+			<input type="text" name="username" id="email" placeholder="Usuario" class="form-style" autocomplete="off"/>
+		</div>
+
+		<div class="form-item">
+			<input type="password" name="password" placeholder="Contraseña" id="password" class="form-style" />
+
+		</div>
+		<div class="center">
+			<input type="submit" class="login" value="Ingresar">
+		</div>
+
+
+		<center >
+			<br />
+			<h4 ><small>Si desea ingresar a nuestra comunidad,</small></a></h4>
+			<h4 ><small> envíe un mail a:</small></a></h4>
+			<h4 ><small>stefania.g.a@outlook.com</small></a></h4>
+			<div class="clear-fix"></div>
+		</center>
+	</form>
+
+</div>
+</div>
+</body>
 
 {% endblock %}
 
