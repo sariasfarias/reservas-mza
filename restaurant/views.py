@@ -1217,36 +1217,47 @@ class ReservationViewSet(viewsets.ModelViewSet):
         # obtener llegada y salida
         reservation_day_leaving = leaving
         # get today open dinner
-        open_dinner = reservation_day_leaving.replace(hour=restaurant.open_dinner.hour,
-                                                      minute=restaurant.open_dinner.minute,
-                                                      second=0, microsecond=0)
-        # get today closed dinner
-        closed_dinner = reservation_day_leaving.replace(hour=restaurant.close_dinner.hour,
-                                                        minute=restaurant.close_dinner.minute,
-                                                        second=0, microsecond=0)
-        if restaurant.close_dinner < restaurant.open_dinner:
-            closed_dinner += timedelta(days=1)
+        if restaurant.open_dinner and restaurant.close_dinner:
+            open_dinner = reservation_day_leaving.replace(hour=restaurant.open_dinner.hour,
+                                                          minute=restaurant.open_dinner.minute,
+                                                          second=0, microsecond=0)
+            # get today closed dinner
+            closed_dinner = reservation_day_leaving.replace(hour=restaurant.close_dinner.hour,
+                                                            minute=restaurant.close_dinner.minute,
+                                                            second=0, microsecond=0)
+            if restaurant.close_dinner < restaurant.open_lunch:
+                closed_dinner += timedelta(days=1)
 
         if coming < closed_lunch:
             if coming < open_lunch:
-                return Response("Restaurant abre " + str(open_lunch.hour) + ":" + str(open_lunch.minute),
-                                status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    "Restaurant abre " + str(open_lunch.hour) + ":" + round_minute(open_lunch.minute) + " hs",
+                    status=status.HTTP_400_BAD_REQUEST)
         else:
-            if closed_dinner:
+            if restaurant.open_dinner and restaurant.close_dinner:
                 if closed_dinner < coming:
-                    return Response("Restaurant cierra " + str(closed_dinner.hour) + ":" + str(closed_dinner.minute),
+                    return Response("Restaurant cierra " + str(closed_dinner.hour) + ":" + round_minute(
+                        closed_dinner.minute) + " hs",
                                     status=status.HTTP_400_BAD_REQUEST)
                 elif coming < open_dinner:
-                    return Response("Restaurant abre " + str(open_dinner.hour) + ":" + str(open_dinner.minute),
-                                    status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        "Restaurant abre " + str(open_dinner.hour) + ":" + round_minute(open_dinner.minute) + " hs",
+                        status=status.HTTP_400_BAD_REQUEST)
+            else:
+                if open_lunch < coming:
+                    return Response(
+                        "Restaurant abre " + str(open_lunch.hour) + ":" + round_minute(open_lunch.minute) + " hs",
+                        status=status.HTTP_400_BAD_REQUEST)
 
-        if closed_lunch < leaving and coming < open_lunch:
-            return Response("Restaurant cierra " + str(closed_lunch.hour) + ":" + str(closed_lunch.minute),
-                            status=status.HTTP_400_BAD_REQUEST)
-        elif closed_dinner:
+        if restaurant.open_dinner and restaurant.close_dinner:
             if closed_dinner < leaving:
-                return Response("Restaurant cierra " + str(closed_dinner.hour) + ":" + str(closed_dinner.minute),
-                                status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    "Restaurant cierra " + str(closed_dinner.hour) + ":" + round_minute(closed_dinner.minute) + " hs",
+                    status=status.HTTP_400_BAD_REQUEST)
+        elif closed_lunch < leaving and open_lunch < coming:
+            return Response(
+                "Restaurant cierra " + str(closed_lunch.hour) + ":" + round_minute(closed_lunch.minute) + " hs",
+                status=status.HTTP_400_BAD_REQUEST)
 
         init = coming
         active_reservation = True
@@ -1257,6 +1268,8 @@ class ReservationViewSet(viewsets.ModelViewSet):
                 if reservation_hour.capacity + new_reservation['number_guest'] <= restaurant.total_capacity:
                     reservation_hour.capacity += new_reservation['number_guest']
                     reservation_hour.capacity_free = restaurant.capacity - reservation_hour.capacity
+                    if reservation_hour.capacity_free < 0:
+                        reservation_hour.capacity_free = 0
                     reservation_hour.save()
                 else:
                     active_reservation = False
@@ -1276,4 +1289,11 @@ class ReservationViewSet(viewsets.ModelViewSet):
                 reservation_hour.save()
             return super().create(request)
         else:
-            return Response("Horario no disponible, revisar Reservas", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Capacidad llena, consulte en Disponibilidad otros horarios",
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+def round_minute(minute):
+    if minute < 10:
+        return '0' + str(minute)
+    return minute
