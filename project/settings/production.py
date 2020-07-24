@@ -33,8 +33,7 @@ SECRET_KEY = 'o7%(6*rg=d-v8@5_l)igqxch+k%s$ftfanycsq0it)m3d_f7y^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'reservas-mza-qa.herokuapp.com', 'reservas-mza.herokuapp.com']
-
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
 
 # Application definition
 
