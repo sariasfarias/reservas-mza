@@ -21,6 +21,7 @@ class Restaurant(models.Model):
     open_dinner = models.TimeField(null=True, blank=True)
     close_dinner = models.TimeField(null=True, blank=True)
     picture = models.CharField(max_length=500, null=True, blank=True)
+    small_picture = models.CharField(max_length=500, null=True, blank=True)
     telephone = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
