@@ -9,8 +9,10 @@
 {% endblock %}
 
 <h1>{{ restaurant.name }}</h1>
-        <h6>{{ restaurant.description }}</h6>
+        {% if restaurant.description != None %}
+        <h6 style="text-align:center">{{ restaurant.description }}</h6>
         <br />
+        {% endif%}
         {% if restaurant.address != None %}
         <h2>{{ restaurant.address }}</h2>
         {% endif%}
